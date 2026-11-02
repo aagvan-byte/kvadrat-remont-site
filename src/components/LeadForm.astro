@@ -1,0 +1,122 @@
+---
+// Форма заявки. Отправляет данные на /api/lead, а сервер пересылает их в Telegram.
+import { repairTypes } from '../data/site';
+
+interface Props {
+  source: string; // с какой страницы пришла заявка — видно в Telegram
+  dark?: boolean;
+}
+
+const { source, dark = false } = Astro.props;
+const id = `lead-${source}`;
+
+const field =
+  'mt-2 block w-full rounded-lg border border-line bg-surface px-4 py-3 text-base text-ink outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/25';
+const label = dark ? 'font-medium text-stone-200' : 'font-medium';
+---
+
+<div data-lead-form>
+  <form id={id} class="grid gap-5 sm:grid-cols-2" novalidate>
+    <input type="hidden" name="source" value={source} />
+
+    <!-- Ловушка для спам-ботов: люди это поле не видят и не заполняют -->
+    <div class="absolute -left-[9999px]" aria-hidden="true">
+      <label>Не заполняйте это поле <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+    </div>
+
+    <label>
+      <span class={label}>Имя</span>
+      <input name="name" type="text" required maxlength="60" autocomplete="given-name" class={field} />
+    </label>
+    <label>
+      <span class={label}>Телефон</span>
+      <input name="phone" type="tel" required autocomplete="tel" placeholder="+7 900 000-00-00" class={field} />
+    </label>
+    <label>
+      <span class={label}>Вид ремонта</span>
+      <select name="type" class={field}>
+        {repairTypes.map((t) => <option>{t}</option>)}
+      </select>
+    </label>
+    <label>
+      <span class={label}>Площадь, м²</span>
+      <input name="area" type="number" min="1" max="1000" inputmode="numeric" class={field} />
+    </label>
+    <label class="sm:col-span-2">
+      <span class={label}>Комментарий <span class="font-normal opacity-70">(необязательно)</span></span>
+      <textarea name="comment" rows="3" maxlength="1000" class={field}></textarea>
+    </label>
+
+    <label class:list={['flex items-start gap-3 text-sm sm:col-span-2', dark ? 'text-stone-300' : 'text-muted']}>
+      <input name="consent" type="checkbox" required class="mt-0.5 h-5 w-5 shrink-0 accent-accent" />
+      <span>Согласен на обработку персональных данных для связи со мной по заявке</span>
+    </label>
+
+    <p data-error class="hidden rounded-lg bg-red-50 px-4 py-3 text-sm font-medium text-red-700 sm:col-span-2" role="alert"></p>
+
+    <button
+      type="submit"
+      class="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-accent px-7 py-3.5 font-semibold text-ink transition-colors hover:bg-accent-hover hover:text-white disabled:cursor-wait disabled:opacity-70 sm:col-span-2"
+    >
+      <svg data-spinner class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" opacity="0.25" />
+        <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+      </svg>
+      <span data-label>Получить расчёт стоимости</span>
+    </button>
+  </form>
+
+  <div data-success class="hidden rounded-xl bg-surface p-8 text-center text-ink" role="status" tabindex="-1">
+    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent-soft text-accent-hover">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg>
+    </div>
+    <p class="mt-4 font-display text-xl font-semibold">Заявка принята</p>
+    <p class="mt-2 text-muted">Перезвоним в течение 15 минут в рабочее время.</p>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-lead-form]').forEach((root) => {
+    const form = root.querySelector('form')!;
+    const error = root.querySelector<HTMLElement>('[data-error]')!;
+    const success = root.querySelector<HTMLElement>('[data-success]')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    const spinner = root.querySelector<SVGElement>('[data-spinner]')!;
+
+    const showError = (text: string) => {
+      error.textContent = text;
+      error.classList.remove('hidden');
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      error.classList.add('hidden');
+
+      const phone = (form.elements.namedItem('phone') as HTMLInputElement).value;
+      if (!form.checkValidity() || phone.replace(/\D/g, '').length < 10) {
+        showError('Укажите имя, телефон (не меньше 10 цифр) и отметьте согласие.');
+        (form.querySelector(':invalid') as HTMLElement | null)?.focus();
+        return;
+      }
+
+      button.disabled = true;
+      spinner.classList.remove('hidden');
+      try {
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(new FormData(form))),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        form.classList.add('hidden');
+        success.classList.remove('hidden');
+        success.focus();
+      } catch {
+        showError('Не получилось отправить заявку. Попробуйте ещё раз или позвоните нам.');
+      } finally {
+        button.disabled = false;
+        spinner.classList.add('hidden');
+      }
+    });
+  });
+</script>

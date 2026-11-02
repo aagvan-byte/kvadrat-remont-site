@@ -1,0 +1,27 @@
+---
+import { site, nav } from '../data/site';
+---
+
+<footer class="bg-dark text-stone-300">
+  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3">
+    <div>
+      <p class="font-display text-lg font-semibold text-white">{site.name}</p>
+      <p class="mt-2">{site.tagline}. {site.city}.</p>
+    </div>
+    <nav aria-label="Навигация в подвале">
+      <ul class="grid grid-cols-2 gap-2">
+        {nav.map((l) => <li><a href={l.href} class="hover:text-white">{l.label}</a></li>)}
+      </ul>
+    </nav>
+    <div class="space-y-1">
+      <a href={site.phoneHref} class="block text-lg font-semibold text-white">{site.phone}</a>
+      <p>{site.hours}</p>
+      <p>{site.address}</p>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <p class="mx-auto max-w-6xl px-4 py-5 text-sm text-stone-400 sm:px-6">
+      © {new Date().getFullYear()} {site.name}. Демо-проект для портфолио: компания вымышленная.
+    </p>
+  </div>
+</footer>

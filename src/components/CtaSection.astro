@@ -1,0 +1,30 @@
+---
+import LeadForm from './LeadForm.astro';
+
+interface Props {
+  source: string;
+  title?: string;
+}
+
+const { source, title = 'Рассчитаем стоимость вашего ремонта' } = Astro.props;
+---
+
+<section id="form" class="bg-dark text-white">
+  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-[1fr_1.4fr] md:py-20">
+    <div>
+      <h2 class="font-display text-2xl font-semibold text-balance sm:text-4xl">{title}</h2>
+      <p class="mt-5 text-lg leading-relaxed text-stone-300">
+        Оставьте заявку — инженер перезвонит, уточнит детали и назначит бесплатный замер в удобное время.
+      </p>
+      <ul class="mt-8 space-y-3 text-stone-200">
+        {['Замер и смета бесплатно', 'Цена фиксируется в договоре', 'Гарантия 3 года'].map((t) => (
+          <li class="flex items-center gap-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" class="shrink-0 text-accent" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg>
+            {t}
+          </li>
+        ))}
+      </ul>
+    </div>
+    <LeadForm source={source} dark />
+  </div>
+</section>
