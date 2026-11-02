@@ -1,6 +1,13 @@
 // Все тексты и данные компании в одном месте.
 // Для нового клиента в первую очередь меняется этот файл.
 
+import sokolniki from '../assets/works/sokolniki.jpg';
+import taganka from '../assets/works/taganka.jpg';
+import novostroyka from '../assets/works/novostroyka.jpg';
+import stalinka from '../assets/works/stalinka.jpg';
+import sanuzel from '../assets/works/sanuzel.jpg';
+import odnushka from '../assets/works/odnushka.jpg';
+
 export const site = {
   name: 'Квадрат',
   tagline: 'Ремонт квартир под ключ',
@@ -77,12 +84,12 @@ export const steps = [
 ];
 
 export const works = [
-  { title: 'Двушка в ЖК «Сокольники»', type: 'Капитальный', area: 58, days: 75, price: '1,1 млн ₽' },
-  { title: 'Студия на Таганке', type: 'Дизайнерский', area: 32, days: 60, price: '780 тыс. ₽' },
-  { title: 'Трёшка в новостройке', type: 'Новостройка', area: 84, days: 90, price: '1,6 млн ₽' },
-  { title: 'Квартира в сталинке', type: 'Капитальный', area: 71, days: 95, price: '1,4 млн ₽' },
-  { title: 'Санузел в Химках', type: 'Санузел', area: 6, days: 12, price: '180 тыс. ₽' },
-  { title: 'Однушка для сдачи', type: 'Косметический', area: 38, days: 21, price: '290 тыс. ₽' },
+  { title: 'Двушка в ЖК «Сокольники»', type: 'Капитальный', area: 58, days: 75, price: '1,1 млн ₽', image: sokolniki, alt: 'Гостиная, совмещённая с кухней, после ремонта' },
+  { title: 'Студия на Таганке', type: 'Дизайнерский', area: 32, days: 60, price: '780 тыс. ₽', image: taganka, alt: 'Светлая минималистичная студия' },
+  { title: 'Трёшка в новостройке', type: 'Новостройка', area: 84, days: 90, price: '1,6 млн ₽', image: novostroyka, alt: 'Гостиная с панорамными окнами' },
+  { title: 'Квартира в сталинке', type: 'Капитальный', area: 71, days: 95, price: '1,4 млн ₽', image: stalinka, alt: 'Гостиная с картинами и подсветкой' },
+  { title: 'Санузел в Химках', type: 'Санузел', area: 6, days: 12, price: '180 тыс. ₽', image: sanuzel, alt: 'Ванная комната с мраморной плиткой' },
+  { title: 'Однушка для сдачи', type: 'Косметический', area: 38, days: 21, price: '290 тыс. ₽', image: odnushka, alt: 'Светлая спальня с рабочим местом' },
 ];
 
 export const prices = [
