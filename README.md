@@ -28,6 +28,8 @@ npm run dev            # http://localhost:4321
 2. Напишите боту любое сообщение и узнайте ID чата.
 3. Впишите `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` в `.env` локально и в Environment Variables на Vercel.
 
+Если Telegram доступен только через VPN/прокси, запускайте локально `npm run dev:proxy` — Node возьмёт прокси из переменной `HTTPS_PROXY`.
+
 ## Как адаптировать под клиента
 
 Тексты, услуги, цены и контакты — `src/data/site.ts`. Цвета и шрифты — `src/styles/global.css`.

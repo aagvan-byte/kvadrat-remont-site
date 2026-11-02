@@ -54,11 +54,19 @@ export const POST: APIRoute = async ({ request }) => {
     .filter((line) => line !== null)
     .join('\n');
 
-  const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: 'HTML' }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text, parse_mode: 'HTML' }),
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    // Telegram недоступен (сеть, таймаут) — сообщаем посетителю, что нужно попробовать ещё раз
+    console.error('Telegram API unreachable');
+    return json(502, { error: 'telegram_unreachable' });
+  }
 
   if (!res.ok) {
     // Логируем только код ответа — без токена и данных клиента
